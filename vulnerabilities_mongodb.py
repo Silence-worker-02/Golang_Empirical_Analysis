@@ -57,14 +57,14 @@ def convert2json(detail):
     }
 
 
-def insert_mongo(table, insert_data_dict: dict):  # Õâ¸öĞÔÄÜ¸üºÃ
+def insert_mongo(table, insert_data_dict: dict):  # è¿™ä¸ªæ€§èƒ½æ›´å¥½
     """
-    ÍùmongodbÖĞ²åÈëÊı¾İ, _idÎª×ÔÔö, ×¢Òâ_idÎªÊıÖµÀàĞÍ
-    :param table: ±íÃû
-    :param insert_data_dict: ²åÈëµÄÊı¾İ,ÀıÈç{"name": "zhang"}
+    å¾€mongodbä¸­æ’å…¥æ•°æ®, _idä¸ºè‡ªå¢, æ³¨æ„_idä¸ºæ•°å€¼ç±»å‹
+    :param table: è¡¨å
+    :param insert_data_dict: æ’å…¥çš„æ•°æ®,ä¾‹å¦‚{"name": "zhang"}
     :return: insert_id
     """
-    last_data = table.find_one(sort=[('_id', -1)])  # È¡³ö×îºóÒ»ÌõÊı¾İ
+    last_data = table.find_one(sort=[('_id', -1)])  # å–å‡ºæœ€åä¸€æ¡æ•°æ®
     if not last_data:
         insert_data_dict["_id"] = 1
     else:
@@ -72,14 +72,14 @@ def insert_mongo(table, insert_data_dict: dict):  # Õâ¸öĞÔÄÜ¸üºÃ
     return table.insert_one(insert_data_dict).inserted_id
 
 
-def insert_mongo_many(table, insert_data_dict_list: [dict]):  # Õâ¸öĞÔÄÜ¸üºÃ
+def insert_mongo_many(table, insert_data_dict_list: [dict]):  # è¿™ä¸ªæ€§èƒ½æ›´å¥½
     """
-    ÍùmongodbÖĞ²åÈëÊı¾İ, _idÎª×ÔÔö, ×¢Òâ_idÎªÊıÖµÀàĞÍ
-    :param insert_data_dict_list: ²åÈëµÄÊı¾İ,ÀıÈç{"name": "zhang"}
-    :param table: ±íÃû
+    å¾€mongodbä¸­æ’å…¥æ•°æ®, _idä¸ºè‡ªå¢, æ³¨æ„_idä¸ºæ•°å€¼ç±»å‹
+    :param insert_data_dict_list: æ’å…¥çš„æ•°æ®,ä¾‹å¦‚{"name": "zhang"}
+    :param table: è¡¨å
     :return: insert_id
     """
-    last_data = table.find_one(sort=[('_id', -1)])  # È¡³ö×îºóÒ»ÌõÊı¾İ
+    last_data = table.find_one(sort=[('_id', -1)])  # å–å‡ºæœ€åä¸€æ¡æ•°æ®
     if not last_data:
         insert_origin = 1
         for insert_data_dict in insert_data_dict_list:
@@ -186,22 +186,22 @@ def crawl_snyk_vuls_by_pages():
 def check_empty_go_mod(go_mod_file):
     with open(go_mod_file, 'r', encoding='utf-8') as file:
         content = file.read()
-    # Ê¹ÓÃÕıÔò±í´ïÊ½Æ¥Åärequire»òreplace¶ÎÊÇ·ñÎª¿Õ
+    # ä½¿ç”¨æ­£åˆ™è¡¨è¾¾å¼åŒ¹é…requireæˆ–replaceæ®µæ˜¯å¦ä¸ºç©º
     pattern = r"require\s+([\w./@-]+)\s+v?([\w.-]+)"
     matches = re.findall(pattern, content)
 
-    # ÅĞ¶ÏÆ¥Åä½á¹ûÊÇ·ñÎª¿Õ
+    # åˆ¤æ–­åŒ¹é…ç»“æœæ˜¯å¦ä¸ºç©º
     if not matches:
-        return True  # go.modÎÄ¼şÖĞÃ»ÓĞÒıÓÃÆäËûÒÀÀµ
+        return True  # go.modæ–‡ä»¶ä¸­æ²¡æœ‰å¼•ç”¨å…¶ä»–ä¾èµ–
     else:
-        return False  # go.modÎÄ¼şÖĞÒıÓÃÁËÆäËûÒÀÀµ
+        return False  # go.modæ–‡ä»¶ä¸­å¼•ç”¨äº†å…¶ä»–ä¾èµ–
 
 
 def search_modules_name(origin_path):
     result = dict()
-    # »ñÈ¡ËùÓĞµÄ go.mod ÎÄ¼şÂ·¾¶
+    # è·å–æ‰€æœ‰çš„ go.mod æ–‡ä»¶è·¯å¾„
     go_mod_files = glob.glob(os.path.join(origin_path, '**/go.mod'), recursive=True)
-    # ±éÀúÃ¿¸ö go.mod ÎÄ¼ş²¢½âÎö module Ãû³Æ
+    # éå†æ¯ä¸ª go.mod æ–‡ä»¶å¹¶è§£æ module åç§°
     for go_mod_file in go_mod_files:
         module_path = go_mod_file.replace('\\', '/').replace('/go.mod', '')
         # with open(go_mod_file, 'r') as file:
@@ -344,18 +344,18 @@ def generate_vulnerabilities_by_local():
 
 
 def count_matching_elements(str1, str2):
-    # ½«×Ö·û´®°´'/'·Ö¸îÎªÊı×é£¬²¢×ª»»ÎªĞ¡Ğ´ĞÎÊ½
+    # å°†å­—ç¬¦ä¸²æŒ‰'/'åˆ†å‰²ä¸ºæ•°ç»„ï¼Œå¹¶è½¬æ¢ä¸ºå°å†™å½¢å¼
     arr1 = [s.lower() for s in str1.split('/')]
     arr2 = [s.lower() for s in str2.split('/')]
 
-    count = 0  # Í³¼ÆÆ¥Åä³É¹¦µÄÔªËØ¸öÊı
+    count = 0  # ç»Ÿè®¡åŒ¹é…æˆåŠŸçš„å…ƒç´ ä¸ªæ•°
 
-    # ±éÀúÁ½¸öÊı×é£¬Öğ¸ö±È½ÏÔªËØ
+    # éå†ä¸¤ä¸ªæ•°ç»„ï¼Œé€ä¸ªæ¯”è¾ƒå…ƒç´ 
     for i in range(min(len(arr1), len(arr2))):
         if arr1[i] == arr2[i]:
             count += 1
         else:
-            break  # Óöµ½²»Ò»ÖÂµÄÔªËØ£¬Í£Ö¹±éÀú
+            break  # é‡åˆ°ä¸ä¸€è‡´çš„å…ƒç´ ï¼Œåœæ­¢éå†
 
     return count
 
@@ -364,7 +364,7 @@ def update_mongodb_element():
     db = connect_mongodb()
     table = db['snyk_vulnerabilities']
 
-    # ¸üĞÂÊı¾İ
+    # æ›´æ–°æ•°æ®
     filter = {'package_path': 'github.com/AdguardTeam/AdGuardHome/home'}
     update = {'$set': {'package_path': 'github.com/AdguardTeam/AdGuardHome/home'.lower()}}
     table.update_one(filter, update)
@@ -580,7 +580,7 @@ def map_repo():
 def generate_mongo_vuls_info():
     db = connect_mongodb()
     if 'vulnerabilities_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
+        # åˆ›å»ºé›†åˆ
         db.create_collection('vulnerabilities_info')
     vul_info_table = db['vulnerabilities_info']
     snky_vuls = db['snyk_vulnerabilities']
@@ -622,7 +622,7 @@ def generate_mongo_vuls_info():
 def generate_mongo_repo_init():
     db = connect_mongodb()
     if 'repo_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
+        # åˆ›å»ºé›†åˆ
         db.create_collection('repo_info')
     vul_info_table = db['vulnerabilities_info']
     repo_info_table = db['repo_info']
@@ -663,7 +663,7 @@ def generate_mongo_repo_commits():
     db = connect_mongodb()
     repo_info_table = db['repo_info']
     if 'commits_info_new' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
+        # åˆ›å»ºé›†åˆ
         db.create_collection('commits_info_new')
     commit_info_table = db['commits_info_new']
     for repo in repo_info_table.find():
@@ -734,7 +734,7 @@ def generate_vul_patches_init():
     repo_info_table = db['repo_info']
     vul_info_table = db['vulnerabilities_info']
     if 'patches_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
+        # åˆ›å»ºé›†åˆ
         db.create_collection('patches_info')
     patch_info_table = db['patches_info']
     for vul in vul_info_table.find():
@@ -860,7 +860,7 @@ def split_list_by_count(lst, count):
 def search_mongo_pulls():
     db = connect_mongodb()
     if 'pulls_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
+        # åˆ›å»ºé›†åˆ
         db.create_collection('pulls_info')
     pulls_info_table = db['pulls_info']
     repo_info_table = db['repo_info']
@@ -914,7 +914,7 @@ def search_mongo_pulls():
 def search_mongo_issues():
     db = connect_mongodb()
     if 'issues_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
+        # åˆ›å»ºé›†åˆ
         db.create_collection('issues_info')
     issues_info_table = db['issues_info']
     repo_info_table = db['repo_info']
@@ -1087,7 +1087,7 @@ def update_final_pulls_issues():
 def generate_google_dependency_mongo():
     db = connect_mongodb()
     if 'dependencies' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
+        # åˆ›å»ºé›†åˆ
         db.create_collection('dependencies')
     dependencies_table = db['dependencies']
     origin_path = 'D:/go_dep'
@@ -1114,6 +1114,9 @@ if __name__ == '__main__':
     # map_repo()
     # generate_mongo_vuls_info()
     # generate_mongo_repo_init()
+
+    # Use the download_repos.py()
+
     # generate_mongo_repo_commits()
     # generate_vul_patches_init()
     # search_mongo_pulls()
