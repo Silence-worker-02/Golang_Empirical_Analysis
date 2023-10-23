@@ -1,8 +1,9 @@
 # Golang_Empirical_Analysis
 This repository is provide the scripts and technical documentation of Empirical Analysis of Vulnerabilities Life Cycle in Golang Ecosystem.
 
+note: The functions in these files need excute one by one.
 1. Use the index_crawl.py to crawl the index information about Golang Index.
-2. Use the vulnerability_mongodb.py to generate the vulnerability database. The function in this file need excute one by one.
+2. Use the vulnerability_mongodb.py to generate the vulnerability database. 
 3. Use the generate_safe_range.py to obtain the safe range of vulnerabilities.
 4. Download the dependency relation from Bigquery Database.
 5. Use the generate_vul_dependents.py to determine the repos that we will analyze.
