@@ -1,4 +1,4 @@
-# Golang_Empirical_Analysis
+# Empirical Analysis of Vulnerabilities Life Cycle in Golang Ecosystem.
 This repository is provide the scripts and technical documentation of Empirical Analysis of Vulnerabilities Life Cycle in Golang Ecosystem.
 
 note: The functions in these files need excute one by one.
