@@ -35,14 +35,14 @@ def get_new_libvers_from_host(time_stamp):
     return libs
 
 
-def insert_mongo(table, insert_data_dict: dict):  # Õâ¸öĞÔÄÜ¸üºÃ
+def insert_mongo(table, insert_data_dict: dict):  # è¿™ä¸ªæ€§èƒ½æ›´å¥½
     """
-    ÍùmongodbÖĞ²åÈëÊı¾İ, _idÎª×ÔÔö, ×¢Òâ_idÎªÊıÖµÀàĞÍ
-    :param table: ±íÃû
-    :param insert_data_dict: ²åÈëµÄÊı¾İ,ÀıÈç{"name": "zhang"}
+    å¾€mongodbä¸­æ’å…¥æ•°æ®, _idä¸ºè‡ªå¢, æ³¨æ„_idä¸ºæ•°å€¼ç±»å‹
+    :param table: è¡¨å
+    :param insert_data_dict: æ’å…¥çš„æ•°æ®,ä¾‹å¦‚{"name": "zhang"}
     :return: insert_id
     """
-    last_data = table.find_one(sort=[('_id', -1)])  # È¡³ö×îºóÒ»ÌõÊı¾İ
+    last_data = table.find_one(sort=[('_id', -1)])  # å–å‡ºæœ€åä¸€æ¡æ•°æ®
     if not last_data:
         insert_data_dict["_id"] = 1
     else:
@@ -50,14 +50,14 @@ def insert_mongo(table, insert_data_dict: dict):  # Õâ¸öĞÔÄÜ¸üºÃ
     return table.insert_one(insert_data_dict).inserted_id
 
 
-def insert_mongo_many(table, insert_data_dict_list: [dict]):  # Õâ¸öĞÔÄÜ¸üºÃ
+def insert_mongo_many(table, insert_data_dict_list: [dict]):  # è¿™ä¸ªæ€§èƒ½æ›´å¥½
     """
-    ÍùmongodbÖĞ²åÈëÊı¾İ, _idÎª×ÔÔö, ×¢Òâ_idÎªÊıÖµÀàĞÍ
-    :param insert_data_dict_list: ²åÈëµÄÊı¾İ,ÀıÈç{"name": "zhang"}
-    :param table: ±íÃû
+    å¾€mongodbä¸­æ’å…¥æ•°æ®, _idä¸ºè‡ªå¢, æ³¨æ„_idä¸ºæ•°å€¼ç±»å‹
+    :param insert_data_dict_list: æ’å…¥çš„æ•°æ®,ä¾‹å¦‚{"name": "zhang"}
+    :param table: è¡¨å
     :return: insert_id
     """
-    last_data = table.find_one(sort=[('_id', -1)])  # È¡³ö×îºóÒ»ÌõÊı¾İ
+    last_data = table.find_one(sort=[('_id', -1)])  # å–å‡ºæœ€åä¸€æ¡æ•°æ®
     if not last_data:
         insert_origin = 1
         for insert_data_dict in insert_data_dict_list:
@@ -74,7 +74,7 @@ def insert_mongo_many(table, insert_data_dict_list: [dict]):  # Õâ¸öĞÔÄÜ¸üºÃ
 def index_crawl(time_stamp):
     db = connect_mongodb()
     if 'golang_index' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
+        # åˆ›å»ºé›†åˆ
         db.create_collection('golang_index')
     golang_index_table = db['golang_index']
     # first index date is 2019-4-10
@@ -95,7 +95,6 @@ def index_crawl(time_stamp):
 if __name__ == '__main__':
     db = connect_mongodb()
     if 'golang_index' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
         db.create_collection('golang_index')
     golang_index_table = db['golang_index']
     f = open('./index.txt', 'r')
