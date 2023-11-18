@@ -24,10 +24,7 @@ def connect_mongodb():
 
 
 def convert_to_utc(time_str):
-    # ½âÎöÎª datetime ¶ÔÏó
     time_obj = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S %z")
-
-    # ½«Ê±¼ä¶ÔÏó×ª»»Îª UTC Ê±¼ä
     utc_time = time_obj.astimezone(pytz.utc)
     return utc_time
 
@@ -45,14 +42,8 @@ def read(q):
         return None
 
 
-def insert_mongo(table, insert_data_dict: dict):  # Õâ¸öĞÔÄÜ¸üºÃ
-    """
-    ÍùmongodbÖĞ²åÈëÊı¾İ, _idÎª×ÔÔö, ×¢Òâ_idÎªÊıÖµÀàĞÍ
-    :param table: ±íÃû
-    :param insert_data_dict: ²åÈëµÄÊı¾İ,ÀıÈç{"name": "zhang"}
-    :return: insert_id
-    """
-    last_data = table.find_one(sort=[('_id', -1)])  # È¡³ö×îºóÒ»ÌõÊı¾İ
+def insert_mongo(table, insert_data_dict: dict):  # è¿™ä¸ªæ€§èƒ½æ›´å¥½
+    last_data = table.find_one(sort=[('_id', -1)])  # å–å‡ºæœ€åä¸€æ¡æ•°æ®
     if not last_data:
         insert_data_dict["_id"] = 1
     else:
@@ -64,7 +55,6 @@ def search_tag_index():
     db = connect_mongodb()
     repos_table = db['repo_info']
     if 'fix_tag_index_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
         db.create_collection('fix_tag_index_info')
     tag_index_table = db['fix_tag_index_info']
     repos = []
@@ -212,7 +202,6 @@ def search_tag_index_for_one(repo_name):
     db = connect_mongodb()
     repos_table = db['repo_info']
     if 'fix_tag_index_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
         db.create_collection('fix_tag_index_info')
     tag_index_table = db['fix_tag_index_info']
     index_table = db['golang_index']
@@ -483,20 +472,20 @@ def generate_vul_tag_normal_intervals():
             intervals.append(float(j))
         s = pd.Series(intervals)
 
-        # std_threshold = 3  # ÉèÖÃÎª3±¶±ê×¼²î
+        # std_threshold = 3  # è®¾ç½®ä¸º3å€æ ‡å‡†å·®
         # s_mean = s.mean()
         # s_std = s.std()
         # s[(s - s_mean).abs() > std_threshold * s_std] = np.nan
 
-        # Ê¹ÓÃ quantile º¯Êı¼ÆËãËÄ·ÖÎ»Êı£¬²¢ÉèÖÃãĞÖµ
+        # ä½¿ç”¨ quantile å‡½æ•°è®¡ç®—å››åˆ†ä½æ•°ï¼Œå¹¶è®¾ç½®é˜ˆå€¼
         q1 = s.quantile(0.25)
         q3 = s.quantile(0.75)
-        iqr_threshold = 1.5  # ÉèÖÃÎª1.5±¶ËÄ·ÖÎ»¾à
+        iqr_threshold = 1.5  # è®¾ç½®ä¸º1.5å€å››åˆ†ä½è·
         iqr = q3 - q1
         s[s < (q1 - iqr_threshold * iqr)] = np.nan
         s[s > (q3 + iqr_threshold * iqr)] = np.nan
 
-        # »ñÈ¡Õı³£È¡Öµ·¶Î§
+        # è·å–æ­£å¸¸å–å€¼èŒƒå›´
         normal_range = (s.dropna().min(), s.dropna().max())
         normal_intervals[lib_name] = normal_range
     f = open('./normal_intervals.json', 'w')
@@ -606,7 +595,6 @@ def generate_vul_tag_interval():
     db = connect_mongodb()
     vul_table = db['vulnerabilities_info']
     if 'vul_tag_interval' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
         db.create_collection('vul_tag_interval')
     vul_tag_interval_table = db['vul_tag_interval']
     with open('./normal_intervals.json', encoding='utf-8') as a:
@@ -1053,15 +1041,14 @@ def compute_lag_index():
     print(count)
 
 
-# repo,vul_id,cve,cwe,T_fix,dependents,state of patch version(0:Î´·¢²¼,1:·¢²¼),
-# state of merge(0:Î´´æÔÚÓÚÖ÷·ÖÖ§,1:´æÔÚÓÚÖ÷·ÖÖ§,2:´æÔÚÓÚÖ÷·ÖÖ§µ«ÊÇÎ´Í¨¹ıcheck,3:²»´æÔÚÓÚÖ÷·ÖÖ§ÇÒÎ´Í¨¹ıcheck),star,last commit time
+# repo,vul_id,cve,cwe,T_fix,dependents,state of patch version(0:unrelease,1:release),
+# state of merge(0:not in the main branch,1:in the main branch,2:in the main branch but not pass the checks,3:not in the main branch and not pass the checks,star,last commit time
 def insert_no_patch_version_info_table():
     f = open('./no_patch_version_info.txt', 'r')
     content = f.read().split('\n')
     f.close()
     db = connect_mongodb()
     if 'no_patch_version_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
         db.create_collection('no_patch_version_info')
     table = db['no_patch_version_info']
     for i in content:
@@ -1569,14 +1556,8 @@ def figure_of_trend_of_non_fix():
     print(fix_before_2019 + fix_2019 + fix_2020 + fix_2021 + fix_2022 + fix_2023)
 
 
-def insert_mongo_many(table, insert_data_dict_list: [dict]):  # Õâ¸öĞÔÄÜ¸üºÃ
-    """
-    ÍùmongodbÖĞ²åÈëÊı¾İ, _idÎª×ÔÔö, ×¢Òâ_idÎªÊıÖµÀàĞÍ
-    :param insert_data_dict_list: ²åÈëµÄÊı¾İ,ÀıÈç{"name": "zhang"}
-    :param table: ±íÃû
-    :return: insert_id
-    """
-    last_data = table.find_one(sort=[('_id', -1)])  # È¡³ö×îºóÒ»ÌõÊı¾İ
+def insert_mongo_many(table, insert_data_dict_list: [dict]):  # è¿™ä¸ªæ€§èƒ½æ›´å¥½
+    last_data = table.find_one(sort=[('_id', -1)])  # å–å‡ºæœ€åä¸€æ¡æ•°æ®
     if not last_data:
         insert_origin = 1
         for insert_data_dict in insert_data_dict_list:
@@ -1595,7 +1576,6 @@ def search_golang_repo_stars():
     with open('./go_sum_result_dependent_first.json', encoding='utf-8') as a:
         go_sum_result_dependent_first = json.load(a)
     if 'golang_repo_info' not in db.list_collection_names():
-        # ´´½¨¼¯ºÏ
         db.create_collection('golang_repo_info')
     golang_table = db['golang_repo_info']
     already = set()
@@ -2329,10 +2309,10 @@ def median(lst):
     sorted_lst = sorted(lst)
     n = len(sorted_lst)
     if n % 2 == 1:
-        # ÁĞ±í³¤¶ÈÎªÆæÊı
+        # åˆ—è¡¨é•¿åº¦ä¸ºå¥‡æ•°
         return sorted_lst[n // 2]
     else:
-        # ÁĞ±í³¤¶ÈÎªÅ¼Êı
+        # åˆ—è¡¨é•¿åº¦ä¸ºå¶æ•°
         mid1 = sorted_lst[n // 2 - 1]
         mid2 = sorted_lst[n // 2]
         return (mid1 + mid2) / 2
@@ -2867,37 +2847,71 @@ def result_of_compare_abnormal_time():
 
 if __name__ == '__main__':
     # prepare dataset and process them
+
+    # search tag using time in Golang Index
     search_tag_index()
+    # generate the time intervals of tags
     get_vul_module_tag_intervals_by_branch()
+    # generate the normal release cycle
     generate_vul_tag_normal_intervals()
+    # generate the current release cycle
     get_fixing_commits_intervals()
+    # convert normal release cycle and current release cycle to the time format
     generate_research_question_two_data()
+    # generate the vul_tag_interval table
     generate_vul_tag_interval()
+    # add the T_fix, T_ver, T_index to the vul_tag_interval table
     update_fix_tag_index()
+    # add the lags to the vul_tag_interval table
     update_lags()
+    # if repo not has tag, add to the vul_tag_interval table
     update_vul_tag_interval_no_tag()
+    # set these repo lags as ''
     update_addition_lags()
+    # processing the data from get_exactly_patch_time.py, to obtain the T_dept
     process_go_sum_result()
+    # count the dependents number in each year
     count_exist_go_sum()
+    # manual find the patch and add to the vul_tag_interval table
     insert_no_patch_version_info_table()
     update_no_patch_version_info_table()
+    
     # rq1
+    
+    # based the data from get_exactly_patch_time.py, obtain the dependents whether resolved vulnerabilities
     dataset_of_rq1()
+    # generate the data of "Impact over Time of Vulnerabilities of 2019 and after"
     rq1_figure_exist_vul()
     rq1_figure_exist_vul_base_vul()
     rq1_figure_exist_vul_total_vuls()
     generate_after_2019_vul_dependent_graph()
     generate_before_2019_vuls_fig_dataset()
+    
     # rq2
-    find_merge_commit()
+
+    # verify the merge commit
+    find_merge_commit()        
+    # update the vul_tag_interval table
     update_lag_ver()
+    # generate the data of "Distribution of ğ¿ğ‘‡ğ‘£ğ‘’ğ‘Ÿ and ğ¿ğ‘ğ‘”ğ‘£ğ‘’ğ‘Ÿ"
     compute_lag_ver()
+    generate the data of "Distribution of ğ¿ğ‘ğ‘”ğ‘–ğ‘›ğ‘‘ğ‘’ğ‘¥"
     compute_lag_index()
+    
     # rq3
+
+    # generate the data of "Distribution of Vulnerability-Dependent"
     rq3_calculate_portion_of_fixing_sign()
+    # generate the data of "Distribution of Vulnerability-Dependents against ğ‘‡ğ‘‘ğ‘’ğ‘ğ‘¡"
     req3_calculate_proportion_of_t_fix_index_dept()
+    
     # rq4
+
+    # search the vulnerabilities that absent patch verions
     non_patch_version()
+    # search the vulnerabilities that not pushing patch verions to Golang Index
     non_patch_index()
+    # search the vulnerabilities that LT_ver more than one month and have Lag_ver
     rq4_patch_version_delay()
+    # search the dependents that still have the vulnerabilities order by stars
     vul_repo_stars()
