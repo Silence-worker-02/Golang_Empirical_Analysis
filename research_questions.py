@@ -2880,10 +2880,11 @@ if __name__ == '__main__':
     
     # based the data from get_exactly_patch_time.py, obtain the dependents whether resolved vulnerabilities
     dataset_of_rq1()
-    # generate the data of "Impact over Time of Vulnerabilities of 2019 and after"
+    # generate the data of "Distribution of Affected Depts"
     rq1_figure_exist_vul()
     rq1_figure_exist_vul_base_vul()
     rq1_figure_exist_vul_total_vuls()
+    # generate the data of "Impact over Time of Vulnerabilities of 2019 and after"
     generate_after_2019_vul_dependent_graph()
     generate_before_2019_vuls_fig_dataset()
     
@@ -2895,7 +2896,7 @@ if __name__ == '__main__':
     update_lag_ver()
     # generate the data of "Distribution of 𝐿𝑇𝑣𝑒𝑟 and 𝐿𝑎𝑔𝑣𝑒𝑟"
     compute_lag_ver()
-    generate the data of "Distribution of 𝐿𝑎𝑔𝑖𝑛𝑑𝑒𝑥"
+    # generate the data of "Distribution of 𝐿𝑎𝑔𝑖𝑛𝑑𝑒𝑥"
     compute_lag_index()
     
     # rq3
